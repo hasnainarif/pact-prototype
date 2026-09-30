@@ -151,10 +151,68 @@ body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#df
 #nav button .ni{font-size:21px}
 #nav button.on{color:var(--brand2)}
 .hidden{display:none!important}
+/* ---------- onboarding ---------- */
+.ob-wrap{padding:36px 24px;overflow-y:auto}
+.ob-wrap h1{font-size:28px;margin:14px 0 6px}
+.fld-lab{font-size:13px;font-weight:700;color:var(--brand2);margin:16px 0 6px;display:block}
+.ob-wrap input,.ob-wrap select{width:100%;padding:14px;border:1px solid var(--line);border-radius:14px;font-size:15px;outline:none;background:#fff}
+.ob-note{font-size:12.5px;color:var(--mut);margin-top:14px;line-height:1.6}
+/* ---------- my coaches ---------- */
+.coach-row{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:12px 14px;margin:0 20px 10px;box-shadow:var(--shadow);cursor:pointer}
+.coach-row .avatar{width:52px;height:52px;font-size:19px;margin:0;flex:0 0 auto}
+.coach-row .inf{flex:1;min-width:0}
+.coach-row .inf b{font-size:14.5px}
+.coach-row .inf .lm{font-size:12.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.coach-row .go{color:var(--brand2);font-weight:800;font-size:20px}
+/* ---------- task tracker ---------- */
+.tchip{flex:0 0 auto;padding:8px 14px;border-radius:16px;background:#fff;font-size:12.5px;font-weight:700;color:var(--mut);border:1px solid var(--line);cursor:pointer}
+.tchip.on{background:var(--ink);color:#fff;border:none}
+.stbadge{font-size:10px;font-weight:800;padding:4px 10px;border-radius:10px;letter-spacing:.3px;flex:0 0 auto}
+.st-todo{background:#fef3c7;color:#92400e}.st-prog{background:#dbeafe;color:#1e40af}.st-done{background:#d1fae5;color:#065f46}
+.titem .del{background:none;border:none;color:#c3cad6;font-size:18px;cursor:pointer;flex:0 0 auto}
+.addbar{display:flex;gap:8px;margin-top:10px}
+.addbar input{flex:1;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:14px;outline:none}
+.addbar button{padding:12px 18px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;font-weight:800;cursor:pointer}
+.mbti-tag{display:inline-block;background:#eef2ff;border:1px solid #dbe4ff;color:#3b4a6b;font-size:11px;font-weight:800;padding:2px 8px;border-radius:8px;margin-left:6px;letter-spacing:.5px}
 </style>
 </head>
 <body>
 <div id="app">
+
+  <!-- ONBOARD -->
+  <div class="screen" id="screen-onboard">
+    <div class="ob-wrap">
+      <div class="hero" style="border-radius:20px;padding:24px 20px">
+        <div class="demo">WELCOME TO PACT</div>
+        <h1 style="font-size:26px">Let's set you up 🤝</h1>
+        <p>Tell us a little about yourself so your partner can coach you better.</p>
+      </div>
+      <label class="fld-lab">Your name *</label>
+      <input id="ob-name" placeholder="e.g. Hasnain Arif">
+      <label class="fld-lab">Email (optional)</label>
+      <input id="ob-email" type="email" placeholder="you@example.com">
+      <label class="fld-lab">Main goal area *</label>
+      <select id="ob-goal">
+        <option>Research</option><option>Tech</option><option>Business</option><option>Finance</option>
+        <option>Health</option><option>Creative</option><option>Study</option><option>Lifestyle</option>
+      </select>
+      <label class="fld-lab">Your personality type (optional)</label>
+      <select id="ob-mbti">
+        <option value="">Prefer not to say</option>
+        <option>INTJ — Strategic mastermind</option><option>INTP — Logical architect</option>
+        <option>ENTJ — Bold commander</option><option>ENTP — Clever debater</option>
+        <option>INFJ — Quiet visionary</option><option>INFP — Idealistic dreamer</option>
+        <option>ENFJ — Inspiring mentor</option><option>ENFP — Energetic explorer</option>
+        <option>ISTJ — Reliable organizer</option><option>ISFJ — Loyal guardian</option>
+        <option>ESTJ — Decisive executive</option><option>ESFJ — Warm helper</option>
+        <option>ISTP — Practical problem-solver</option><option>ISFP — Gentle artist</option>
+        <option>ESTP — Bold doer</option><option>ESFP — Fun-loving performer</option>
+      </select>
+      <p class="ob-note">Your personality type helps match you with a partner whose coaching style fits you. You can change it anytime from My Pact.</p>
+      <div style="height:18px"></div>
+      <button class="btn" onclick="saveOnboard()">Continue →</button>
+    </div>
+  </div>
 
   <!-- HOME -->
   <div class="screen active" id="screen-home">
@@ -169,6 +227,17 @@ body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#df
     <div class="grid" id="grid"></div>
   </div>
 
+  <!-- MY COACHES -->
+  <div class="screen" id="screen-coaches">
+    <div class="hero" style="padding:24px 20px 20px">
+      <div class="demo">PROTOTYPE DEMO</div>
+      <h1 style="font-size:24px">My Coaches 💬</h1>
+      <p>Partners you're actively talking to. Jump back in anytime.</p>
+    </div>
+    <div class="sec-head"><h2>Active conversations</h2><span id="coach-count"></span></div>
+    <div id="coach-list" style="padding-bottom:20px"></div>
+  </div>
+
   <!-- PROFILE -->
   <div class="screen" id="screen-profile">
     <div class="phead">
@@ -177,6 +246,7 @@ body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#df
       <h2 id="pf-name"></h2>
       <div><span class="aibadge">AI PARTNER</span></div>
       <div class="per-tag" id="pf-per"></div>
+      <div class="per-tag" id="pf-mbti" style="margin-top:5px;font-size:12.5px"></div>
     </div>
     <div class="pbody">
       <div class="stat-row">
@@ -229,13 +299,18 @@ body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#df
         <div><b style="font-size:16px">Accountability score</b><p style="font-size:13px;color:var(--mut);margin-top:4px">Based on check-ins, task completion and streaks this week.</p></div>
       </div>
       <div class="streak"><div class="fl">🔥</div><div><b>6-day streak</b><br><small id="streak-line">Your partner checks in every evening. Don't break the chain.</small></div></div>
-      <div class="tlist"><h4>Today's tasks</h4><div id="tasks"></div></div>
+      <div class="tlist"><h4>Task tracker</h4>
+        <div class="chips" id="tfilters" style="padding:6px 0 10px"></div>
+        <div id="tasks"></div>
+        <div class="addbar"><input id="newtask" placeholder="Add a task..."><button onclick="manualAdd()">Add</button></div>
+      </div>
       <div class="verdict"><h4>💬 Your partner's verdict</h4><p id="verdict">Show up today and I'll update this tonight. No hiding.</p></div>
     </div>
   </div>
 
   <nav id="nav">
     <button class="on" onclick="go('screen-home',this)"><span class="ni">🤝</span>Partners</button>
+    <button onclick="go('screen-coaches',this)"><span class="ni">💬</span>My Coaches</button>
     <button onclick="go('screen-pact',this)"><span class="ni">🎯</span>My Pact</button>
   </nav>
 </div>
@@ -311,9 +386,9 @@ const PARTNERS=[
 {n:"Dr. Khalid Mahmood",f:"Research Methods",cat:"Research",s:["Survey Design","SPSS","Qualitative Methods","Sampling","Ethics"],p:"professor",b:"Research supervisor. I make your methodology bulletproof before your defense.",intro:"Assalam-o-Alaikum, I'm Khalid. What's your research question today?",g:["#1e3a8a","#93c5fd"],r:4.9,c:"4.5k"},
 {n:"Faisal Rehman",f:"Dropshipping",cat:"Business",s:["Product Hunting","Shopify","TikTok Ads","Suppliers","Scaling"],p:"hype",b:"Scaled stores past $100k/mo. I keep your testing aggressive and honest.",intro:"Faisal here! Which product are we scaling this week?",g:["#0f766e","#5eead4"],r:4.6,c:"5.2k"}];
 /* ==================== APP LOGIC ==================== */
-let cur=-1, msgCount=0, myTasks=[
- {t:"Morning check-in with partner",done:true},
- {t:"2 hours deep work",done:false}];
+let cur=-1, msgCount=0, tFilter="All", myTasks=[
+ {t:"Morning check-in with partner",st:"done",by:"Pact",due:"Today"},
+ {t:"2 hours deep work",st:"todo",by:"You",due:"Today"}];
 const $=id=>document.getElementById(id);
 const initials=n=>n.replace(/^(Dr\.|Coach|Chef|Engineer)\s+/,'').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const ava=(p,sz)=>`<div class="avatar" style="background:linear-gradient(135deg,${p.g[0]},${p.g[1]})${sz?`;width:${sz}px;height:${sz}px;font-size:${sz*0.36}px`:''}">${initials(p.n)}</div>`;
@@ -325,6 +400,7 @@ function go(id,btn){
   if(btn)btn.classList.add('on');
   else if(id==='screen-home')document.querySelectorAll('#nav button')[0].classList.add('on');
   if(id==='screen-pact')renderPact();
+  if(id==='screen-coaches')renderCoaches();
   window.scrollTo(0,0);
 }
 /* ---------- home ---------- */
@@ -343,7 +419,7 @@ function renderGrid(){
     <div class="pcard" onclick="openProfile(${i})">
       <span class="aibadge">AI</span>${ava(p)}
       <h3>${p.n}</h3><div class="fld">${p.f}</div>
-      <div class="per">${PERS[p.p].label}</div>
+      <div class="per">${PERS[p.p].label}<span class="mbti-tag">${pMBTI(p)}</span></div>
       <div class="meta"><span class="stars">★ ${p.r}</span><span>${p.c} check-ins</span></div>
     </div>`).join('')||'<p style="padding:20px;color:var(--mut)">No partners found.</p>';
 }
@@ -355,6 +431,7 @@ function openProfile(i){
   $('pf-avatar').textContent=initials(p.n);
   $('pf-name').textContent=p.n;
   $('pf-per').textContent=PERS[p.p].label+" • "+p.f;
+  $('pf-mbti').innerHTML='Personality type: <b>'+pMBTI(p)+'</b> — '+MBTI_DESC[pMBTI(p)];
   $('pf-rating').textContent="★ "+p.r;
   $('pf-checkins').textContent=p.c;
   $('pf-bio').textContent=p.b;
@@ -365,7 +442,7 @@ function openProfile(i){
 }
 /* ---------- chat ---------- */
 function openChat(i){
-  cur=i;msgCount=0;const p=PARTNERS[i];
+  cur=i;msgCount=0;registerCoach(i);const p=PARTNERS[i];
   $('ch-avatar').style.background=`linear-gradient(135deg,${p.g[0]},${p.g[1]})`;
   $('ch-avatar').textContent=initials(p.n);
   $('ch-name').textContent=p.n;
@@ -384,9 +461,11 @@ function quick(t){
 function scrollM(){$('msgs').scrollTop=$('msgs').scrollHeight;}
 function userSay(t,html){
   $('msgs').insertAdjacentHTML('beforeend',`<div class="msg me">${html||t.replace(/</g,'&lt;')}</div>`);
+  if(cur>=0)lastMsg[cur]=t;
   scrollM();setTimeout(()=>botReply(t),600);
 }
 function botSay(t,voiceBtn){
+  if(cur>=0)lastMsg[cur]=t;
   const d=document.createElement('div');
   d.className='msg them';
   d.innerHTML=t+(voiceBtn?`<button class="spk" onclick="speak(this.parentElement.innerText)">🔊</button>`:'');
@@ -421,13 +500,13 @@ function suggestTask(){
   scrollM();
 }
 function acceptTask(t,btn){
-  myTasks.push({t,done:false});
+  myTasks.push({t,st:'todo',by:PARTNERS[cur].n,due:'Today'});
   btn.closest('.taskcard').remove();
   botSay("Locked in: <b>"+t+"</b>. I'll ask you about it tonight. Don't make me chase you.",true);
 }
 function addTaskFlow(){
   const t=prompt("What's the task? (one line)");
-  if(t&&t.trim()){myTasks.push({t:t.trim(),done:false});userSay("I'll do: "+t.trim());}
+  if(t&&t.trim()){myTasks.push({t:t.trim(),st:'todo',by:'You',due:'Today'});userSay("I'll do: "+t.trim());}
 }
 /* voice note from partner (demo: TTS played as a 'voice message' bubble) */
 function partnerVoiceNote(){
@@ -489,20 +568,75 @@ if('speechSynthesis' in window)speechSynthesis.getVoices();
 /* ---------- my pact ---------- */
 function renderPact(){
   $('pact-sub').textContent=cur>=0?("Partner: "+PARTNERS[cur].n+" • checks in nightly"):"Pick a partner to activate daily check-ins.";
-  $('tasks').innerHTML=myTasks.map((t,i)=>`<div class="titem${t.done?' done':''}"><div class="cb" onclick="toggleTask(${i})">${t.done?'✓':''}</div><span class="txt">${t.t.replace(/</g,'&lt;')}</span></div>`).join('');
-  const done=myTasks.filter(t=>t.done).length,total=myTasks.length||1;
-  const score=Math.min(99,Math.round(70+(done/total)*25+(cur>=0?3:0)));
-  $('score-num').textContent=score;
-  $('ringfg').style.strokeDashoffset=264-(264*score/100);
+  renderTasks();renderPactScore();
   const L=cur>=0?LINES[PARTNERS[cur].p]:LINES.mentor;
+  const done=myTasks.filter(t=>t.st==='done').length;
   $('verdict').textContent=done===myTasks.length&&myTasks.length>0?L.praise:L.scold;
   $('streak-line').textContent=cur>=0?PARTNERS[cur].n.split(' ').slice(-1)[0]+" checks in every evening. Don't break the chain.":"Your partner checks in every evening. Don't break the chain.";
 }
-function toggleTask(i){myTasks[i].done=!myTasks[i].done;if(myTasks[i].done)addScoreSilent(2);renderPact();}
-function addScore(n){const el=$('score-num');el.textContent=Math.min(99,parseInt(el.textContent)+n);}
-function addScoreSilent(n){}
+function renderPactScore(){
+  const done=myTasks.filter(t=>t.st==='done').length,total=myTasks.length||1;
+  const score=Math.min(99,Math.round(70+(done/total)*25+(cur>=0?3:0)));
+  $('score-num').textContent=score;
+  $('ringfg').style.strokeDashoffset=264-(264*score/100);
+}
+/* ---------- task tracker ---------- */
+const TF=["All","To Do","In Progress","Done"];
+const STM={todo:"To Do",prog:"In Progress",done:"Done"};
+function renderTasks(){
+  $('tfilters').innerHTML=TF.map(f=>`<div class="tchip${f===tFilter?' on':''}" onclick="setTF('${f}')">${f}</div>`).join('');
+  const list=myTasks.map((t,i)=>({t,i})).filter(({t})=>tFilter==="All"||STM[t.st]===tFilter);
+  $('tasks').innerHTML=list.map(({t,i})=>`
+    <div class="titem${t.st==='done'?' done':''}">
+      <div class="cb" style="${t.st!=='todo'?'background:var(--accent);border-color:var(--accent)':''}" onclick="cycleTask(${i})">${t.st!=='todo'?'✓':''}</div>
+      <div style="flex:1;min-width:0"><span class="txt">${t.t.replace(/</g,'&lt;')}</span>
+      <div style="font-size:11px;color:var(--mut);margin-top:2px">${String(t.by).replace(/</g,'&lt;')} • Due ${t.due}</div></div>
+      <span class="stbadge st-${t.st}">${STM[t.st].toUpperCase()}</span>
+      <button class="del" onclick="delTask(${i})">×</button>
+    </div>`).join('')||'<p style="padding:10px 0;color:var(--mut);font-size:13.5px">Nothing here. Add a task below.</p>';
+}
+function setTF(f){tFilter=f;renderTasks();}
+function cycleTask(i){const o=['todo','prog','done'];myTasks[i].st=o[(o.indexOf(myTasks[i].st)+1)%3];renderTasks();renderPactScore();}
+function delTask(i){myTasks.splice(i,1);renderTasks();renderPactScore();}
+function manualAdd(){const v=$('newtask').value.trim();if(!v)return;myTasks.push({t:v,st:'todo',by:'You',due:'Today'});$('newtask').value='';renderTasks();renderPactScore();}
+/* ---------- MBTI ---------- */
+const MBTI_MAP={sergeant:"ESTJ",mentor:"ENFJ",analyst:"INTJ",brother:"ESFP",stoic:"ISTJ",hype:"ENFP",professor:"INTP",detective:"ISTP"};
+const MBTI_DESC={INTJ:"Strategic mastermind",ENTJ:"Bold commander",INTP:"Logical architect",ENTP:"Clever debater",INFJ:"Quiet visionary",ENFJ:"Inspiring mentor",INFP:"Idealistic dreamer",ENFP:"Energetic explorer",ISTJ:"Reliable organizer",ESTJ:"Decisive executive",ISFJ:"Loyal guardian",ESFJ:"Warm helper",ISTP:"Practical problem-solver",ESTP:"Bold doer",ISFP:"Gentle artist",ESFP:"Fun-loving performer"};
+const pMBTI=p=>MBTI_MAP[p.p];
+/* ---------- onboarding ---------- */
+function initOnboard(){
+  let u=null;try{u=JSON.parse(localStorage.getItem('pact_user')||'null');}catch(e){}
+  if(!u)go('screen-onboard');else applyUser(u);
+}
+function applyUser(u){
+  const h=document.querySelector('#screen-home .hero h1');
+  if(h&&u.name)h.innerHTML='Assalam-o-Alaikum, <span>'+String(u.name).split(' ')[0].replace(/</g,'&lt;')+'</span>';
+}
+function saveOnboard(){
+  const name=$('ob-name').value.trim();
+  if(!name){alert("Please enter your name.");return;}
+  const u={name:name,email:$('ob-email').value.trim(),goal:$('ob-goal').value,mbti:$('ob-mbti').value.split(' ')[0]||null};
+  try{localStorage.setItem('pact_user',JSON.stringify(u));}catch(e){}
+  applyUser(u);go('screen-home');
+}
+/* ---------- my coaches ---------- */
+let activeCoaches=[],lastMsg={};
+function registerCoach(i){if(!activeCoaches.includes(i))activeCoaches.push(i);}
+function renderCoaches(){
+  $('coach-count').textContent=activeCoaches.length+" active";
+  if(!activeCoaches.length){
+    $('coach-list').innerHTML='<p style="padding:8px 24px;color:var(--mut);font-size:14px;line-height:1.7">No active coaches yet.<br>Pick a partner and start chatting — they will appear here.</p>';return;
+  }
+  $('coach-list').innerHTML=activeCoaches.map(i=>{const p=PARTNERS[i];return `
+    <div class="coach-row" onclick="openChat(${i})">
+      ${ava(p)}
+      <div class="inf"><b>${p.n}</b><span class="mbti-tag">${pMBTI(p)}</span>
+        <div class="lm">${String(lastMsg[i]||'Say salam to start...').replace(/<[^>]*>/g,'').slice(0,60)}</div></div>
+      <div class="go">›</div>
+    </div>`;}).join('');
+}
 /* init */
-renderChips();renderGrid();renderPact();
+renderChips();renderGrid();renderPact();initOnboard();
 </script>
 </body>
 </html>
