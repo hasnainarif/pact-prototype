@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pact — AI Accountability Partners</title>
+<style>
+:root{
+  --bg:#f4f5fb; --card:#ffffff; --ink:#16213a; --mut:#6d7b93;
+  --brand1:#6d28d9; --brand2:#4f46e5; --accent:#22c55e;
+  --line:#e8ebf3; --radius:18px;
+  --shadow:0 6px 24px rgba(30,27,75,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#dfe3ee;color:var(--ink)}
+#app{max-width:480px;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative;
+  box-shadow:0 0 40px rgba(0,0,0,.15);display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;min-height:0;padding-bottom:86px}
+.screen.active{display:flex}
+/* ---------- home ---------- */
+.hero{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;
+  padding:30px 20px 26px;border-radius:0 0 26px 26px}
+.hero .demo{display:inline-block;background:rgba(255,255,255,.18);font-size:11px;
+  padding:4px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:.4px}
+.hero h1{font-size:30px;font-weight:800}
+.hero h1 span{color:#fde68a}
+.hero p{font-size:14px;opacity:.92;margin-top:8px;line-height:1.5}
+.search{margin:14px 20px 0;position:relative}
+.search input{width:100%;padding:14px 16px 14px 44px;border:none;border-radius:14px;
+  font-size:15px;box-shadow:var(--shadow);outline:none}
+.search .ic{position:absolute;left:15px;top:13px;font-size:18px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:14px 20px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:9px 16px;border-radius:20px;background:#fff;font-size:13px;
+  font-weight:600;color:var(--mut);border:1px solid var(--line);cursor:pointer}
+.chip.on{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;border:none}
+.sec-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 10px}
+.sec-head h2{font-size:17px}
+.sec-head span{font-size:12px;color:var(--mut)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 20px}
+.pcard{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);
+  cursor:pointer;transition:transform .12s;position:relative}
+.pcard:active{transform:scale(.97)}
+.avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:20px;margin-bottom:10px}
+.pcard h3{font-size:14.5px;line-height:1.3}
+.pcard .fld{font-size:12px;color:var(--brand2);font-weight:700;margin-top:3px}
+.pcard .per{font-size:11px;color:var(--mut);margin-top:5px}
+.pcard .meta{display:flex;justify-content:space-between;align-items:center;margin-top:9px;
+  font-size:11.5px;color:var(--mut)}
+.stars{color:#f59e0b;font-size:12px}
+.aibadge{position:absolute;top:12px;right:12px;background:#eef2ff;color:var(--brand2);
+  font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;letter-spacing:.5px}
+/* ---------- profile ---------- */
+.phead{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;
+  padding:20px;border-radius:0 0 26px 26px;text-align:center;position:relative}
+.back{position:absolute;left:16px;top:20px;background:rgba(255,255,255,.2);border:none;color:#fff;
+  width:38px;height:38px;border-radius:12px;font-size:18px;cursor:pointer}
+.phead .avatar{width:96px;height:96px;font-size:34px;margin:6px auto 12px;
+  border:4px solid rgba(255,255,255,.4)}
+.phead h2{font-size:22px}
+.phead .aibadge{position:static;display:inline-block;margin-top:8px}
+.phead .per-tag{font-size:13px;opacity:.9;margin-top:6px}
+.pbody{padding:18px 20px;overflow-y:auto}
+.stat-row{display:flex;gap:10px;margin-bottom:16px}
+.stat{flex:1;background:#fff;border-radius:14px;padding:12px;text-align:center;box-shadow:var(--shadow)}
+.stat b{font-size:17px;display:block}
+.stat small{color:var(--mut);font-size:11px}
+.bio{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.bio h4,.skills-box h4{font-size:14px;margin-bottom:8px;color:var(--brand2)}
+.bio p{font-size:14px;line-height:1.6;color:#33415c}
+.skills-box{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.skill{display:inline-block;background:#f1f5ff;color:#3b4a6b;font-size:12.5px;font-weight:600;
+  padding:7px 12px;border-radius:16px;margin:0 6px 8px 0}
+.skill.primary{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:16px;font-size:16px;font-weight:800;
+  cursor:pointer;background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;
+  box-shadow:0 8px 20px rgba(109,40,217,.35)}
+.btn.ghost{background:#fff;color:var(--brand2);box-shadow:var(--shadow);margin-top:10px}
+.btn:active{transform:scale(.98)}
+/* ---------- chat ---------- */
+.chead{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;
+  padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+.chead .avatar{width:44px;height:44px;font-size:17px;margin:0}
+.chead .nm{font-weight:800;font-size:15.5px}
+.chead .on{font-size:11.5px;opacity:.85;display:flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block}
+#msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.5;
+  animation:pop .18s ease-out;position:relative}
+@keyframes pop{from{transform:translateY(6px);opacity:0}to{transform:none;opacity:1}}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;
+  border-bottom-right-radius:6px}
+.msg.them{align-self:flex-start;background:#fff;color:var(--ink);box-shadow:var(--shadow);
+  border-bottom-left-radius:6px}
+.msg .spk{position:absolute;bottom:-4px;right:-26px;background:#eef2ff;border:none;width:22px;height:22px;
+  border-radius:50%;font-size:11px;cursor:pointer}
+.msg img.att{max-width:100%;border-radius:10px;margin-bottom:6px;display:block}
+.msg audio{max-width:100%;margin-top:4px}
+.typing{align-self:flex-start;background:#fff;border-radius:16px;padding:12px 16px;box-shadow:var(--shadow)}
+.typing span{display:inline-block;width:7px;height:7px;background:#aab4c8;border-radius:50%;margin:0 2px;
+  animation:bl 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,100%{opacity:.3}50%{opacity:1}}
+.taskcard{background:#fffbeB;border:1px solid #fde68a;border-radius:14px;padding:12px 14px;
+  align-self:flex-start;max-width:88%;box-shadow:var(--shadow)}
+.taskcard b{font-size:13.5px}
+.taskcard .tb{margin-top:8px;display:flex;gap:8px}
+.taskcard button{flex:1;padding:9px;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer}
+.taskcard .acc{background:var(--accent);color:#fff}
+.taskcard .dec{background:#f1f5f9;color:var(--mut)}
+.qr{display:flex;gap:8px;overflow-x:auto;padding:8px 14px;scrollbar-width:none;background:transparent}
+.qr::-webkit-scrollbar{display:none}
+.qr button{flex:0 0 auto;background:#fff;border:1px solid var(--brand2);color:var(--brand2);
+  padding:9px 14px;border-radius:18px;font-size:13px;font-weight:700;cursor:pointer}
+.qr button:active{background:var(--brand2);color:#fff}
+.cbar{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:#fff;border-top:1px solid var(--line);align-items:center}
+.cbar .icbtn{width:44px;height:44px;border-radius:14px;border:none;background:#f1f5f9;font-size:19px;
+  cursor:pointer;flex:0 0 auto}
+.cbar .icbtn.rec{background:#fee2e2;animation:bl 1s infinite}
+.cbar input{flex:1;padding:13px 15px;border:1px solid var(--line);border-radius:14px;font-size:15px;outline:none}
+.cbar .send{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff}
+/* ---------- my pact ---------- */
+.dash{padding:20px;overflow-y:auto}
+.scorering{display:flex;align-items:center;gap:16px;background:#fff;border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.ring{width:86px;height:86px;flex:0 0 auto}
+.streak{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);margin-bottom:14px;display:flex;align-items:center;gap:14px}
+.streak .fl{font-size:34px}
+.streak b{font-size:20px}.streak small{opacity:.9;font-size:12.5px}
+.tlist{background:#fff;border-radius:var(--radius);padding:6px 16px 12px;box-shadow:var(--shadow);margin-bottom:14px}
+.tlist h4{font-size:14px;color:var(--brand2);padding:12px 0 4px}
+.titem{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.titem:last-child{border:none}
+.titem .cb{width:24px;height:24px;border-radius:8px;border:2px solid #c7d0e0;flex:0 0 auto;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+.titem.done .cb{background:var(--accent);border-color:var(--accent)}
+.titem.done span.txt{text-decoration:line-through;color:var(--mut)}
+.verdict{background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#fff;border-radius:var(--radius);
+  padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.verdict h4{font-size:14px;margin-bottom:8px;opacity:.9}
+.verdict p{font-size:14.5px;line-height:1.6}
+/* ---------- nav ---------- */
+#nav{position:absolute;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;
+  border-top:1px solid var(--line);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:10}
+#nav button{flex:1;background:none;border:none;font-size:11px;color:var(--mut);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600}
+#nav button .ni{font-size:21px}
+#nav button.on{color:var(--brand2)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="hero">
+      <div class="demo">PROTOTYPE DEMO</div>
+      <h1>Meet your <span>Pact</span> partner.</h1>
+      <p>50 AI accountability partners across every field. Pick one, set your goals, and never miss a day again.</p>
+    </div>
+    <div class="search"><span class="ic">🔍</span><input id="q" placeholder="Search partners or skills..."></div>
+    <div class="chips" id="chips"></div>
+    <div class="sec-head"><h2>All partners</h2><span id="count"></span></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="phead">
+      <button class="back" onclick="go('screen-home')">‹</button>
+      <div class="avatar" id="pf-avatar"></div>
+      <h2 id="pf-name"></h2>
+      <div><span class="aibadge">AI PARTNER</span></div>
+      <div class="per-tag" id="pf-per"></div>
+    </div>
+    <div class="pbody">
+      <div class="stat-row">
+        <div class="stat"><b id="pf-rating"></b><small>rating</small></div>
+        <div class="stat"><b id="pf-checkins"></b><small>check-ins</small></div>
+        <div class="stat"><b>&lt;1 min</b><small>responds in</small></div>
+      </div>
+      <div class="bio"><h4>About</h4><p id="pf-bio"></p></div>
+      <div class="skills-box"><h4>Expert in</h4><div id="pf-skills"></div></div>
+      <button class="btn" id="pf-chat">Start chatting →</button>
+      <button class="btn ghost" id="pf-voice">🔊 Hear intro</button>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="screen" id="screen-chat" style="padding-bottom:0">
+    <div class="chead">
+      <button class="back" style="position:static" onclick="go('screen-home')">‹</button>
+      <div class="avatar" id="ch-avatar"></div>
+      <div><div class="nm" id="ch-name"></div><div class="on"><span class="dot"></span>AI partner • online now</div></div>
+    </div>
+    <div id="msgs"></div>
+    <div class="qr" id="qr"></div>
+    <div class="cbar">
+      <button class="icbtn" id="btn-img" title="Send picture">🖼️</button>
+      <button class="icbtn" id="btn-mic" title="Voice note">🎙️</button>
+      <input id="cin" placeholder="Message...">
+      <button class="icbtn send" id="btn-send">➤</button>
+    </div>
+    <input type="file" id="filein" accept="image/*" class="hidden">
+  </div>
+
+  <!-- MY PACT -->
+  <div class="screen" id="screen-pact">
+    <div class="hero" style="padding:24px 20px 20px">
+      <div class="demo">PROTOTYPE DEMO</div>
+      <h1 style="font-size:24px">My Pact 🔥</h1>
+      <p id="pact-sub">Your accountability dashboard.</p>
+    </div>
+    <div class="dash">
+      <div class="scorering">
+        <svg class="ring" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#eef1f7" stroke-width="11"/>
+          <circle id="ringfg" cx="50" cy="50" r="42" fill="none" stroke="url(#gg)" stroke-width="11"
+            stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="60" transform="rotate(-90 50 50)"/>
+          <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#6d28d9"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs>
+          <text x="50" y="58" text-anchor="middle" font-size="22" font-weight="800" fill="#16213a" id="score-num">82</text>
+        </svg>
+        <div><b style="font-size:16px">Accountability score</b><p style="font-size:13px;color:var(--mut);margin-top:4px">Based on check-ins, task completion and streaks this week.</p></div>
+      </div>
+      <div class="streak"><div class="fl">🔥</div><div><b>6-day streak</b><br><small id="streak-line">Your partner checks in every evening. Don't break the chain.</small></div></div>
+      <div class="tlist"><h4>Today's tasks</h4><div id="tasks"></div></div>
+      <div class="verdict"><h4>💬 Your partner's verdict</h4><p id="verdict">Show up today and I'll update this tonight. No hiding.</p></div>
+    </div>
+  </div>
+
+  <nav id="nav">
+    <button class="on" onclick="go('screen-home',this)"><span class="ni">🤝</span>Partners</button>
+    <button onclick="go('screen-pact',this)"><span class="ni">🎯</span>My Pact</button>
+  </nav>
+</div>
+<script>
+/* ==================== DATA ==================== */
+const PERS={
+sergeant:{label:"The Drill Sergeant"},
+mentor:{label:"The Gentle Mentor"},
+analyst:{label:"The Data Analyst"},
+brother:{label:"The Big Brother"},
+stoic:{label:"The Stoic"},
+hype:{label:"The Hype Coach"},
+professor:{label:"The Professor"},
+detective:{label:"The Detective"}};
+const LINES={
+sergeant:{greet:"No excuses today. Give me your top 3 targets right now.",praise:"Good. That's discipline. Next target.",scold:"Excuses don't get work done. What did you actually do today?",check:"Report. What have you finished since morning?",motivate:"Nobody is coming to save you. Do the work.",help:"Break it into the smallest possible step and do that in the next 10 minutes. Then report back."},
+mentor:{greet:"Welcome back. Tell me, what would make today a win for you?",praise:"I'm proud of you. Small steps every day — that's how it compounds.",scold:"It's okay to stumble. What got in the way? Let's fix it together.",check:"How are you feeling about today's goals so far?",motivate:"You've survived every hard day so far. This one is no different.",help:"Let's make it smaller and kinder. What's one tiny version of this task you could do right now?"},
+analyst:{greet:"Let's look at the numbers. What did you finish yesterday, and what's today's target?",praise:"Logged. Your completion rate just improved. Keep the trend.",scold:"The data doesn't lie: missed sessions this week. What's the blocker?",check:"Quick check-in: tasks done versus planned?",motivate:"What gets measured gets done. Track it.",help:"Let's isolate the variable. Which exact part is blocking you? Name it and we'll solve that one piece."},
+brother:{greet:"Yo! Back at it? Tell me the plan for today.",praise:"Let's gooo! That's what I'm talking about. Keep it rolling.",scold:"Be honest with me — did you actually work, or just scroll?",check:"So... how much of the list is actually done?",motivate:"Future you is watching. Don't let him down.",help:"Alright, let's crack it together. Explain the problem to me like I'm five — rubber-duck it."},
+stoic:{greet:"Another day, another chance to master yourself. What is today's duty?",praise:"Well done. Virtue is its own reward — consistency is its proof.",scold:"You control your effort, not the outcome. Did you give your full effort?",check:"Examine your day: what did you do well, and what needs work?",motivate:"Discipline is choosing what you want most over what you want now.",help:"Focus only on what's in your control. What is the next controllable action?"},
+hype:{greet:"IT'S GO TIME! What's the mission today?!",praise:"UNSTOPPABLE! That's the energy! What's next?!",scold:"No slump talk! Reset right now — one small win in the next 15 minutes. GO!",check:"Energy check! Where are we on today's goals?",motivate:"You're one focused hour away from a totally different week!",help:"Let's make it FUN. Set a 25-minute timer, blast your playlist, and attack just one piece!"},
+professor:{greet:"Good day. Let us structure today's session. What are your learning objectives?",praise:"Excellent work. Your understanding is clearly deepening.",scold:"Let us diagnose the gap. Which concept blocked your progress?",check:"A brief review: what did you study since our last session?",motivate:"Knowledge compounds like interest. Keep depositing.",help:"Let's return to first principles. Define the problem precisely, then we'll build the solution step by step."},
+detective:{greet:"Interesting... you're back. Tell me everything about today's plan.",praise:"Noted. The evidence suggests you're improving. Keep going.",scold:"Something doesn't add up. You planned four hours but logged one. Explain.",check:"Status report: what have you actually done? Be precise.",motivate:"The truth is in the routine. Follow it.",help:"Walk me through what you've tried so far, clue by clue. The answer is hiding in the details."}};
+const PARTNERS=[
+{n:"Dr. Sarah Ahmed",f:"Scientific Research",cat:"Research",s:["Research Methodology","Academic Writing","Data Analysis","Lab Management","Grant Proposals"],p:"professor",b:"Former lab head. I turn messy experiments into publishable papers.",intro:"Hello, I'm Sarah. Bring me your research chaos, and I'll bring the structure.",g:["#4f46e5","#7c3aed"],r:4.9,c:"12.4k"},
+{n:"Marcus Chen",f:"App Development",cat:"Tech",s:["Flutter & Mobile Apps","System Design","Code Reviews","API Architecture","Debugging"],p:"detective",b:"10 years shipping apps. I review your code like a detective and your habits like a coach.",intro:"Hey, Marcus here. Show me your code and your commit history. Both tell the truth.",g:["#0ea5e9","#2563eb"],r:4.8,c:"9.1k"},
+{n:"Ayesha Khan",f:"Accounting",cat:"Finance",s:["Bookkeeping","Financial Statements","Tax Filing","Excel Automation","Audit Prep"],p:"analyst",b:"Numbers never lie, and neither should your ledger. I keep your books ruthless and clean.",intro:"Hi, I'm Ayesha. Send me your messy spreadsheets. We'll fix them together.",g:["#059669","#10b981"],r:4.9,c:"7.8k"},
+{n:"David Okafor",f:"Fitness Training",cat:"Health",s:["Strength Training","Workout Plans","Form Correction","Nutrition Basics","Recovery"],p:"sergeant",b:"Ex-athlete. I don't accept 'too tired'. Your body can do more than your mind allows.",intro:"David here. Lace up. We train today, no negotiations.",g:["#dc2626","#f97316"],r:4.9,c:"15.2k"},
+{n:"Priya Sharma",f:"Academic Writing",cat:"Study",s:["Essay Structure","Thesis Writing","Citations","Literature Reviews","Editing"],p:"professor",b:"Published author and editor. I make your writing sharp, cited, and impossible to ignore.",intro:"Hello, I'm Priya. Send me your draft. I'll make it sing.",g:["#7c3aed","#a855f7"],r:4.8,c:"6.3k"},
+{n:"Omar Farooq",f:"Digital Marketing",cat:"Business",s:["Meta Ads","Content Strategy","Analytics","Email Marketing","Funnels"],p:"hype",b:"Scaled 40+ brands. I hold you to one metric that matters: revenue.",intro:"Omar here! What's your one revenue goal this week? Let's crush it.",g:["#db2777","#f472b6"],r:4.7,c:"8.9k"},
+{n:"Dr. Emily Zhang",f:"Data Science",cat:"Tech",s:["Python","Machine Learning","Statistics","Data Viz","SQL"],p:"analyst",b:"PhD in statistics. I track your learning like a model — every epoch counts.",intro:"Hi, I'm Emily. Let's turn your study data into a winning curve.",g:["#0891b2","#22d3ee"],r:4.9,c:"5.6k"},
+{n:"James Miller",f:"English Fluency",cat:"Study",s:["Speaking Practice","Grammar","Vocabulary","Interview Prep","Accent Training"],p:"mentor",b:"Language coach for 12 years. I make you speak confidently, not perfectly.",intro:"Hey, I'm James. Talk to me daily and watch your fluency fly.",g:["#4f46e5","#818cf8"],r:4.8,c:"11.7k"},
+{n:"Fatima Noor",f:"Web Development",cat:"Tech",s:["JavaScript","React","Node.js","Databases","Deployment"],p:"brother",b:"Full-stack dev who learned the hard way. I keep your coding streak alive.",intro:"Yo, Fatima here. What are we building today?",g:["#16a34a","#4ade80"],r:4.8,c:"10.3k"},
+{n:"Bilal Hussain",f:"Personal Finance",cat:"Finance",s:["Budgeting","Saving Plans","Debt Control","Investing Basics","Expense Tracking"],p:"analyst",b:"I treat your money like a business. Every rupee gets a job.",intro:"Hi, I'm Bilal. Show me where your money went this week.",g:["#047857","#34d399"],r:4.7,c:"6.9k"},
+{n:"Sofia Rossi",f:"UI/UX Design",cat:"Creative",s:["Figma","User Research","Wireframing","Design Systems","Prototyping"],p:"mentor",b:"Design lead in Milan. I critique honestly and teach you to see like a designer.",intro:"Ciao, I'm Sofia. Share your screens — let's make them beautiful.",g:["#be185d","#fb7185"],r:4.9,c:"4.8k"},
+{n:"Imran Sheikh",f:"CSS Exam Prep",cat:"Study",s:["Current Affairs","Essay Writing","Study Plans","Past Papers","Time Management"],p:"sergeant",b:"CSS qualifier. I run your prep like a training camp — syllabus or nothing.",intro:"Imran here. The syllabus is the boss. Are you on schedule?",g:["#b45309","#f59e0b"],r:4.9,c:"13.5k"},
+{n:"Daniel Kim",f:"Freelancing",cat:"Business",s:["Upwork Bidding","Client Communication","Pricing","Portfolios","Contracts"],p:"brother",b:"Top-rated freelancer. I push you to send proposals daily until clients reply.",intro:"Daniel here. How many proposals did you send today? Be honest.",g:["#0d9488","#2dd4bf"],r:4.8,c:"9.7k"},
+{n:"Hira Shahid",f:"E-commerce",cat:"Business",s:["Shopify","Product Research","Facebook Ads","Order Management","Branding"],p:"hype",b:"Built 3 stores to 7 figures. I keep your product testing relentless.",intro:"Hira here! Which product are we testing this week?",g:["#c026d3","#e879f9"],r:4.7,c:"7.2k"},
+{n:"Coach Ryan Blake",f:"Weight Loss",cat:"Health",s:["Meal Planning","Calorie Tracking","Habit Coaching","Home Workouts","Mindset"],p:"sergeant",b:"Lost 40kg myself, then coached 500+ clients. No crash diets, just discipline.",intro:"Coach Ryan here. Step on the scale, log your food. Daily.",g:["#ea580c","#fb923c"],r:4.8,c:"14.1k"},
+{n:"Nadia Ali",f:"Public Speaking",cat:"Creative",s:["Stage Confidence","Speech Structure","Voice Training","Storytelling","Body Language"],p:"hype",b:"TEDx speaker. I turn shaky voices into commanding ones.",intro:"Hi, I'm Nadia! Record yourself speaking today — I'll review it.",g:["#7c2d12","#f59e0b"],r:4.9,c:"5.1k"},
+{n:"Tom Becker",f:"Copywriting",cat:"Creative",s:["Sales Pages","Email Copy","Headlines","Storytelling","Persuasion"],p:"detective",b:"Direct-response copywriter. Every word must earn its place — I'll interrogate yours.",intro:"Tom here. Send me your copy. I'll find every weak sentence.",g:["#1d4ed8","#60a5fa"],r:4.7,c:"4.2k"},
+{n:"Ali Raza",f:"Video Editing",cat:"Creative",s:["Premiere Pro","Reels Editing","Color Grading","Sound Design","Thumbnails"],p:"brother",b:"Edited 2M+ view videos. I keep your upload schedule sacred.",intro:"Ali here. Did you post today? The algorithm waits for no one.",g:["#9a3412","#fdba74"],r:4.8,c:"8.4k"},
+{n:"Dr. Rachel Kim",f:"Startup Fundraising",cat:"Business",s:["Pitch Decks","Investor Outreach","Financial Models","Storytelling","Term Sheets"],p:"analyst",b:"Raised $12M across startups. I make your deck investor-proof.",intro:"Hi, I'm Rachel. What's your runway? Let's extend it.",g:["#166534","#22c55e"],r:4.9,c:"3.1k"},
+{n:"Usman Tariq",f:"SEO",cat:"Business",s:["Keyword Research","On-Page SEO","Link Building","Technical SEO","Analytics"],p:"analyst",b:"Ranked 200+ sites. I track your content like rankings depend on it — they do.",intro:"Usman here. How many articles did you publish this week?",g:["#0e7490","#06b6d4"],r:4.7,c:"5.9k"},
+{n:"Kevin D'Souza",f:"Game Development",cat:"Tech",s:["Unity","C#","Game Design","2D/3D Assets","Publishing"],p:"brother",b:"Indie dev with 3 shipped titles. I keep your devlog honest and your builds shipping.",intro:"Kevin here. Show me today's build — even if it's broken.",g:["#6d28d9","#a78bfa"],r:4.8,c:"4.6k"},
+{n:"Zara Iqbal",f:"Cybersecurity",cat:"Tech",s:["Ethical Hacking","Network Security","CTF Practice","Certifications","Python"],p:"detective",b:"Security analyst. I question everything — including your study excuses.",intro:"Zara here. What did you hack, I mean, learn today?",g:["#991b1b","#f87171"],r:4.9,c:"5.3k"},
+{n:"Ahmed Nasser",f:"Cloud & DevOps",cat:"Tech",s:["AWS","Docker","CI/CD","Linux","Kubernetes"],p:"professor",b:"Cloud architect. I build your skills like infrastructure — solid and scalable.",intro:"Hello, I'm Ahmed. Let's deploy your learning, one service at a time.",g:["#1e40af","#38bdf8"],r:4.8,c:"4.1k"},
+{n:"Maria Santos",f:"Photography",cat:"Creative",s:["Composition","Lighting","Photo Editing","Client Shoots","Portfolios"],p:"mentor",b:"Wedding photographer. I teach you to see light before you press the shutter.",intro:"Hi, I'm Maria! Show me your best shot this week.",g:["#a21caf","#f0abfc"],r:4.8,c:"3.8k"},
+{n:"Arjun Mehta",f:"Music Practice",cat:"Lifestyle",s:["Guitar","Music Theory","Practice Routines","Ear Training","Performance"],p:"mentor",b:"Session guitarist. 30 focused minutes beats 3 distracted hours — I enforce it.",intro:"Arjun here. Did you practice today? Even 15 minutes counts.",g:["#b45309","#fbbf24"],r:4.7,c:"3.4k"},
+{n:"Layla Hassan",f:"Arabic Learning",cat:"Study",s:["Vocabulary","Grammar","Conversation","Quranic Arabic","Writing"],p:"mentor",b:"Arabic teacher. Daily practice, gentle corrections, real conversations.",intro:"Ahlan! I'm Layla. Let's speak some Arabic today.",g:["#047857","#6ee7b7"],r:4.9,c:"6.6k"},
+{n:"Dr. Thomas Weber",f:"PhD Thesis",cat:"Research",s:["Thesis Structure","Research Design","Defense Prep","Publishing","Literature Review"],p:"professor",b:"Supervised 25 PhDs. I run your thesis like a project with deadlines, not dreams.",intro:"Good day, I'm Thomas. What did you write today? Pages, not promises.",g:["#334155","#94a3b8"],r:4.9,c:"2.9k"},
+{n:"Dr. Anya Patel",f:"USMLE Prep",cat:"Study",s:["Study Schedules","Question Banks","Anatomy","Biostatistics","Test Strategy"],p:"sergeant",b:"Scored 265. I run your prep with military precision — UWorld blocks daily.",intro:"Dr. Patel here. How many questions did you do today?",g:["#9d174d","#f472b6"],r:4.9,c:"7.7k"},
+{n:"Hassan Javed",f:"Law / Bar Prep",cat:"Study",s:["Case Analysis","Legal Writing","Memorization","Moot Practice","Ethics"],p:"professor",b:"Barrister. I drill case law until you dream in precedents.",intro:"Hassan here. Which cases did you brief today?",g:["#78350f","#d97706"],r:4.8,c:"3.2k"},
+{n:"Richard Cole",f:"Real Estate",cat:"Business",s:["Property Analysis","Client Handling","Listings","Negotiation","Marketing"],p:"brother",b:"Closed 300+ deals. I keep your prospecting numbers brutally honest.",intro:"Richard here. How many calls did you make today?",g:["#065f46","#34d399"],r:4.7,c:"4.4k"},
+{n:"Sana Malik",f:"Sales",cat:"Business",s:["Cold Outreach","Objection Handling","Closing","CRM Hygiene","Follow-ups"],p:"hype",b:"Top 1% closer. I celebrate your wins and dissect your losses.",intro:"Sana here! What's your pipeline looking like today?",g:["#be123c","#fb7185"],r:4.8,c:"6.1k"},
+{n:"Kamran Aziz",f:"Bookkeeping",cat:"Finance",s:["Ledgers","Reconciliation","Invoicing","Payroll Basics","Reports"],p:"analyst",b:"20 years in ledgers. I spot a one-rupee mismatch from a mile away.",intro:"Kamran here. Are your books reconciled this week?",g:["#1e3a8a","#60a5fa"],r:4.8,c:"3.9k"},
+{n:"Farah Naz",f:"Tax Planning",cat:"Finance",s:["Income Tax","FBR Filing","Deductions","Business Tax","Compliance"],p:"detective",b:"Tax consultant. I find every legal deduction — and every filing you skipped.",intro:"Hi, I'm Farah. Have you filed this quarter? Don't lie.",g:["#713f12","#facc15"],r:4.8,c:"4.7k"},
+{n:"Jonathan Reed",f:"Stock Investing",cat:"Finance",s:["Stock Analysis","Portfolios","Risk Management","Market Research","Dividends"],p:"analyst",b:"Value investor. I keep your emotions out of your portfolio.",intro:"Jonathan here. Did you stick to your investment plan this week?",g:["#14532d","#4ade80"],r:4.7,c:"5.5k"},
+{n:"Mahnoor Fatima",f:"Habit Building",cat:"Lifestyle",s:["Morning Routines","Habit Stacking","Journaling","Consistency Systems","Weekly Reviews"],p:"stoic",b:"Behavioral science nerd. I design systems so willpower becomes irrelevant.",intro:"Hi, I'm Mahnoor. Which habit are we installing this week?",g:["#5b21b6","#c4b5fd"],r:4.9,c:"9.9k"},
+{n:"Peter Novak",f:"Reading",cat:"Lifestyle",s:["Reading Plans","Speed Reading","Note-taking","Book Discussions","Retention"],p:"stoic",b:"200 books a year. I make reading a daily ritual, not a guilt trip.",intro:"Peter here. What page are you on? No judgment, just progress.",g:["#0c4a6e","#7dd3fc"],r:4.7,c:"3.6k"},
+{n:"Anand Iyer",f:"Meditation",cat:"Health",s:["Mindfulness","Breathing","Focus Training","Stress Control","Sleep Hygiene"],p:"stoic",b:"Meditation teacher for a decade. I keep your practice simple and daily.",intro:"Namaste, I'm Anand. Did you sit in stillness today?",g:["#6b7280","#d1d5db"],r:4.9,c:"8.8k"},
+{n:"Chef Lucia Bianchi",f:"Cooking",cat:"Lifestyle",s:["Meal Prep","Pakistani & Italian","Baking","Kitchen Skills","Menu Planning"],p:"mentor",b:"Chef for 15 years. I make your kitchen your favorite accountability gym.",intro:"Ciao! Lucia here. What did you cook today?",g:["#c2410c","#fdba74"],r:4.8,c:"4.3k"},
+{n:"Dania Amir",f:"Interior Design",cat:"Creative",s:["Space Planning","Color Theory","3D Mockups","Budget Decor","Styling"],p:"mentor",b:"Interior stylist. I turn your space into a place that makes you productive.",intro:"Hi, I'm Dania! Send me a photo of your workspace.",g:["#9d174d","#f9a8d4"],r:4.7,c:"2.7k"},
+{n:"Vikram Rao",f:"Architecture",cat:"Creative",s:["Drafting","AutoCAD","3D Visualization","Site Planning","Portfolios"],p:"professor",b:"Practicing architect. I critique your drawings like a jury — fair but firm.",intro:"Vikram here. Show me what you drafted today.",g:["#374151","#9ca3af"],r:4.8,c:"2.4k"},
+{n:"Tariq Mehmood",f:"Civil Engineering",cat:"Tech",s:["Structural Basics","Site Management","Drawings","Estimation","Safety"],p:"sergeant",b:"Site engineer for 18 years. I run your prep like a site — no shortcuts.",intro:"Tariq here. Did you revise your formulas today?",g:["#7c2d12","#fb923c"],r:4.7,c:"3.3k"},
+{n:"Jessica Lane",f:"Blogging",cat:"Creative",s:["Content Calendars","WordPress","SEO Writing","Monetization","Newsletters"],p:"hype",b:"100k monthly readers. I keep your publishing streak unbreakable.",intro:"Jessica here! Did you publish this week? Let's go!",g:["#a21caf","#e879f9"],r:4.7,c:"4.9k"},
+{n:"Hamza Yousuf",f:"YouTube Growth",cat:"Creative",s:["Niche Selection","Scripting","Thumbnails","Analytics","Consistency"],p:"hype",b:"500k subs. I hold you to the upload schedule like views depend on it.",intro:"Hamza here! What's uploading this week?",g:["#b91c1c","#fca5a5"],r:4.8,c:"7.4k"},
+{n:"Oliver Grant",f:"Podcasting",cat:"Creative",s:["Recording","Audio Editing","Interview Skills","Distribution","Growth"],p:"brother",b:"200 episodes in. I keep your mic hot and your episodes on time.",intro:"Oliver here. When's the next episode dropping?",g:["#4d7c0f","#a3e635"],r:4.6,c:"2.2k"},
+{n:"Elena Petrova",f:"Graphic Design",cat:"Creative",s:["Photoshop","Branding","Social Media Kits","Typography","Layouts"],p:"mentor",b:"Brand designer. I give honest critiques that make your portfolio hired.",intro:"Hi, I'm Elena. Share your latest design with me.",g:["#831843","#f472b6"],r:4.8,c:"3.7k"},
+{n:"Sameer Qureshi",f:"3D Modeling",cat:"Tech",s:["Blender","Texturing","Rendering","Animation Basics","Portfolios"],p:"brother",b:"3D artist. I keep your renders coming — one project at a time.",intro:"Sameer here. What are you modeling today?",g:["#155e75","#22d3ee"],r:4.7,c:"2.8k"},
+{n:"Ivan Petrov",f:"Chess",cat:"Lifestyle",s:["Openings","Tactics","Endgames","Game Analysis","Tournaments"],p:"detective",b:"FIDE master. I analyze your games and your blunders without mercy.",intro:"Ivan here. Show me your last game. Every move tells a story.",g:["#292524","#a8a29e"],r:4.8,c:"3.1k"},
+{n:"Coach Diana Moss",f:"Marathon Running",cat:"Health",s:["Training Plans","Pacing","Nutrition","Injury Prevention","Mindset"],p:"sergeant",b:"Ran 12 marathons. I build your mileage like a wall — brick by brick.",intro:"Diana here. Did you run today? Log those kilometers.",g:["#166534","#86efac"],r:4.9,c:"6.8k"},
+{n:"Dr. Khalid Mahmood",f:"Research Methods",cat:"Research",s:["Survey Design","SPSS","Qualitative Methods","Sampling","Ethics"],p:"professor",b:"Research supervisor. I make your methodology bulletproof before your defense.",intro:"Assalam-o-Alaikum, I'm Khalid. What's your research question today?",g:["#1e3a8a","#93c5fd"],r:4.9,c:"4.5k"},
+{n:"Faisal Rehman",f:"Dropshipping",cat:"Business",s:["Product Hunting","Shopify","TikTok Ads","Suppliers","Scaling"],p:"hype",b:"Scaled stores past $100k/mo. I keep your testing aggressive and honest.",intro:"Faisal here! Which product are we scaling this week?",g:["#0f766e","#5eead4"],r:4.6,c:"5.2k"}];
+/* ==================== APP LOGIC ==================== */
+let cur=-1, msgCount=0, myTasks=[
+ {t:"Morning check-in with partner",done:true},
+ {t:"2 hours deep work",done:false}];
+const $=id=>document.getElementById(id);
+const initials=n=>n.replace(/^(Dr\.|Coach|Chef|Engineer)\s+/,'').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const ava=(p,sz)=>`<div class="avatar" style="background:linear-gradient(135deg,${p.g[0]},${p.g[1]})${sz?`;width:${sz}px;height:${sz}px;font-size:${sz*0.36}px`:''}">${initials(p.n)}</div>`;
+
+function go(id,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  else if(id==='screen-home')document.querySelectorAll('#nav button')[0].classList.add('on');
+  if(id==='screen-pact')renderPact();
+  window.scrollTo(0,0);
+}
+/* ---------- home ---------- */
+const CATS=["All","Research","Tech","Business","Finance","Health","Creative","Study","Lifestyle"];
+let catF="All",qF="";
+function renderChips(){
+  $('chips').innerHTML=CATS.map(c=>`<div class="chip${c===catF?' on':''}" onclick="setCat('${c}')">${c}</div>`).join('');
+}
+function setCat(c){catF=c;renderChips();renderGrid();}
+function renderGrid(){
+  const list=PARTNERS.map((p,i)=>({p,i})).filter(({p})=>
+    (catF==="All"||p.cat===catF)&&
+    (qF===""||p.n.toLowerCase().includes(qF)||p.f.toLowerCase().includes(qF)||p.s.join(' ').toLowerCase().includes(qF)));
+  $('count').textContent=list.length+" partners";
+  $('grid').innerHTML=list.map(({p,i})=>`
+    <div class="pcard" onclick="openProfile(${i})">
+      <span class="aibadge">AI</span>${ava(p)}
+      <h3>${p.n}</h3><div class="fld">${p.f}</div>
+      <div class="per">${PERS[p.p].label}</div>
+      <div class="meta"><span class="stars">★ ${p.r}</span><span>${p.c} check-ins</span></div>
+    </div>`).join('')||'<p style="padding:20px;color:var(--mut)">No partners found.</p>';
+}
+$('q').addEventListener('input',e=>{qF=e.target.value.toLowerCase();renderGrid();});
+/* ---------- profile ---------- */
+function openProfile(i){
+  cur=i;const p=PARTNERS[i];
+  $('pf-avatar').style.background=`linear-gradient(135deg,${p.g[0]},${p.g[1]})`;
+  $('pf-avatar').textContent=initials(p.n);
+  $('pf-name').textContent=p.n;
+  $('pf-per').textContent=PERS[p.p].label+" • "+p.f;
+  $('pf-rating').textContent="★ "+p.r;
+  $('pf-checkins').textContent=p.c;
+  $('pf-bio').textContent=p.b;
+  $('pf-skills').innerHTML=p.s.map((s,j)=>`<span class="skill${j===0?' primary':''}">${s}</span>`).join('');
+  $('pf-chat').onclick=()=>openChat(i);
+  $('pf-voice').onclick=()=>speak(p.intro);
+  go('screen-profile');
+}
+/* ---------- chat ---------- */
+function openChat(i){
+  cur=i;msgCount=0;const p=PARTNERS[i];
+  $('ch-avatar').style.background=`linear-gradient(135deg,${p.g[0]},${p.g[1]})`;
+  $('ch-avatar').textContent=initials(p.n);
+  $('ch-name').textContent=p.n;
+  $('msgs').innerHTML='';
+  setQR(["Done for today ✅","I need help","Motivate me","+ Add a task"]);
+  go('screen-chat');
+  setTimeout(()=>botSay(LINES[p.p].greet+"<br><br>What's your #1 goal for today?",true),700);
+}
+function setQR(arr){
+  $('qr').innerHTML=arr.map(t=>`<button onclick="quick('${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');
+}
+function quick(t){
+  if(t==="+ Add a task"){addTaskFlow();return;}
+  userSay(t);
+}
+function scrollM(){$('msgs').scrollTop=$('msgs').scrollHeight;}
+function userSay(t,html){
+  $('msgs').insertAdjacentHTML('beforeend',`<div class="msg me">${html||t.replace(/</g,'&lt;')}</div>`);
+  scrollM();setTimeout(()=>botReply(t),600);
+}
+function botSay(t,voiceBtn){
+  const d=document.createElement('div');
+  d.className='msg them';
+  d.innerHTML=t+(voiceBtn?`<button class="spk" onclick="speak(this.parentElement.innerText)">🔊</button>`:'');
+  $('msgs').appendChild(d);scrollM();
+}
+function typing(on){
+  if(on){$('msgs').insertAdjacentHTML('beforeend','<div class="typing" id="ty"><span></span><span></span><span></span></div>');scrollM();}
+  else{const t=$('ty');if(t)t.remove();}
+}
+function botReply(raw){
+  typing(true);msgCount++;
+  const p=PARTNERS[cur],L=LINES[p.p],t=raw.toLowerCase();
+  setTimeout(()=>{
+    typing(false);
+    let r;
+    if(/done|finish|complete|did it/.test(t)){r=L.praise+" "+L.check;addScore(3);}
+    else if(/stuck|help|difficult|hard|can't|cant|problem/.test(t)){r=L.help;}
+    else if(/motivat|tired|lazy|give up|demotivat/.test(t)){r=L.motivate;}
+    else if(/^(hi|hello|salam|hey|aoa)/.test(t)){r=L.greet;}
+    else if(/task/.test(t)){r="Tell me the task in one line — I'll add it to your pact and check on you tonight.";}
+    else if(/thank|shukriya/.test(t)){r="Anytime. Now back to work — what did you finish today?";}
+    else{r=[L.check,"Noted. And your main goal for today is...?","Okay. Be specific: what will you finish in the next 2 hours?"][msgCount%3];}
+    botSay(r,true);
+    if(msgCount===3)suggestTask();
+    if(msgCount>0&&msgCount%6===0)setTimeout(()=>partnerVoiceNote(),2500);
+  },1100+Math.random()*900);
+}
+function suggestTask(){
+  const ideas={"Research":"Read 2 papers and note 3 key findings","Tech":"Code for 90 minutes without your phone","Business":"Send 10 outreach messages","Finance":"Log every expense from today","Health":"30-minute workout, no skipping","Creative":"Publish one piece of work","Study":"Finish 1 chapter + 20 practice questions","Lifestyle":"Complete your habit tracker before bed"};
+  const idea=ideas[PARTNERS[cur].cat]||"Do 1 hour of focused work";
+  $('msgs').insertAdjacentHTML('beforeend',`<div class="taskcard"><b>🎯 Suggested task</b><br><span style="font-size:13.5px">${idea}</span><div class="tb"><button class="acc" onclick="acceptTask('${idea.replace(/'/g,"\\'")}',this)">Accept</button><button class="dec" onclick="this.closest('.taskcard').remove()">Skip</button></div></div>`);
+  scrollM();
+}
+function acceptTask(t,btn){
+  myTasks.push({t,done:false});
+  btn.closest('.taskcard').remove();
+  botSay("Locked in: <b>"+t+"</b>. I'll ask you about it tonight. Don't make me chase you.",true);
+}
+function addTaskFlow(){
+  const t=prompt("What's the task? (one line)");
+  if(t&&t.trim()){myTasks.push({t:t.trim(),done:false});userSay("I'll do: "+t.trim());}
+}
+/* voice note from partner (demo: TTS played as a 'voice message' bubble) */
+function partnerVoiceNote(){
+  const p=PARTNERS[cur],L=LINES[p.p];
+  const txt=[L.motivate,L.check][Math.floor(Math.random()*2)];
+  const d=document.createElement('div');
+  d.className='msg them';
+  d.innerHTML=`🎙️ <i>Voice note (0:${10+Math.floor(Math.random()*40)})</i> — tap to play<button class="spk" onclick='speak(${JSON.stringify(txt)})'>▶</button>`;
+  $('msgs').appendChild(d);scrollM();
+}
+/* ---------- input bar ---------- */
+$('btn-send').onclick=()=>{const v=$('cin').value.trim();if(v){$('cin').value='';userSay(v);}};
+$('cin').addEventListener('keydown',e=>{if(e.key==='Enter')$('btn-send').click();});
+$('btn-img').onclick=()=>$('filein').click();
+$('filein').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{$('msgs').insertAdjacentHTML('beforeend',`<div class="msg me"><img class="att" src="${r.result}"><br>Shared a picture</div>`);scrollM();
+    setTimeout(()=>{typing(true);setTimeout(()=>{typing(false);botSay("Nice — I can see it. Now tell me: what did you actually get done today?",true);},1200);},600);};
+  r.readAsDataURL(f);e.target.value='';
+});
+/* mic recording */
+let rec=null,chunks=[],recording=false;
+$('btn-mic').onclick=async()=>{
+  if(recording){rec.stop();return;}
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    rec=new MediaRecorder(s);chunks=[];
+    rec.ondataavailable=e=>chunks.push(e.data);
+    rec.onstop=()=>{
+      const url=URL.createObjectURL(new Blob(chunks,{type:'audio/webm'}));
+      $('msgs').insertAdjacentHTML('beforeend',`<div class="msg me">🎙️ Voice note<br><audio controls src="${url}"></audio></div>`);
+      scrollM();s.getTracks().forEach(t=>t.stop());
+      setTimeout(()=>botReply("voice note sent"),700);
+    };
+    rec.start();recording=true;$('btn-mic').classList.add('rec');$('btn-mic').textContent='⏹️';
+  }catch(err){alert("Microphone blocked. Allow mic access to send voice notes.");}
+};
+const _stop=()=>{if(recording){recording=false;$('btn-mic').classList.remove('rec');$('btn-mic').textContent='🎙️';}};
+setInterval(()=>{if(rec&&rec.state==='recording'&&!recording)_stop();},500);
+const origStop=()=>{};
+/* wrap: reset mic button when recording stops */
+setInterval(()=>{
+  if(rec&&rec.state==='inactive'&&recording){recording=false;$('btn-mic').classList.remove('rec');$('btn-mic').textContent='🎙️';}
+},400);
+/* ---------- TTS ---------- */
+function speak(t){
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]*>/g,''));
+    u.rate=1;u.pitch=1;
+    const vs=speechSynthesis.getVoices();
+    const v=vs.find(v=>v.lang.startsWith('en')&&v.name.includes('Google'))||vs.find(v=>v.lang.startsWith('en'));
+    if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+if('speechSynthesis' in window)speechSynthesis.getVoices();
+/* ---------- my pact ---------- */
+function renderPact(){
+  $('pact-sub').textContent=cur>=0?("Partner: "+PARTNERS[cur].n+" • checks in nightly"):"Pick a partner to activate daily check-ins.";
+  $('tasks').innerHTML=myTasks.map((t,i)=>`<div class="titem${t.done?' done':''}"><div class="cb" onclick="toggleTask(${i})">${t.done?'✓':''}</div><span class="txt">${t.t.replace(/</g,'&lt;')}</span></div>`).join('');
+  const done=myTasks.filter(t=>t.done).length,total=myTasks.length||1;
+  const score=Math.min(99,Math.round(70+(done/total)*25+(cur>=0?3:0)));
+  $('score-num').textContent=score;
+  $('ringfg').style.strokeDashoffset=264-(264*score/100);
+  const L=cur>=0?LINES[PARTNERS[cur].p]:LINES.mentor;
+  $('verdict').textContent=done===myTasks.length&&myTasks.length>0?L.praise:L.scold;
+  $('streak-line').textContent=cur>=0?PARTNERS[cur].n.split(' ').slice(-1)[0]+" checks in every evening. Don't break the chain.":"Your partner checks in every evening. Don't break the chain.";
+}
+function toggleTask(i){myTasks[i].done=!myTasks[i].done;if(myTasks[i].done)addScoreSilent(2);renderPact();}
+function addScore(n){const el=$('score-num');el.textContent=Math.min(99,parseInt(el.textContent)+n);}
+function addScoreSilent(n){}
+/* init */
+renderChips();renderGrid();renderPact();
+</script>
+</body>
+</html>
